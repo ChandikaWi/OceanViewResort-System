@@ -94,6 +94,7 @@
                     <th>Check-In</th>
                     <th>Check-Out</th>
                     <th>Total Bill</th>
+                    <th>Actions</th> 
                 </tr>
             </thead>
             <tbody>
@@ -109,6 +110,12 @@
                     <td><%= r.getCheckIn() %></td>
                     <td><%= r.getCheckOut() %></td>
                     <td>$<%= r.getTotalCost() %></td>
+                    <td>
+                        <a href="BillServlet?id=<%= r.getId() %>" target="_blank" 
+                           style="background-color: #17a2b8; color: white; padding: 5px 10px; text-decoration: none; border-radius: 4px; font-size: 14px;">
+                           Print Bill
+                        </a>
+                    </td>
                 </tr>
                 <% } %>
             </tbody>
