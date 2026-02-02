@@ -85,6 +85,17 @@
 
     <div class="container">
         <h2>Current Reservations</h2>
+        <div style="margin-bottom: 20px; text-align: right;">
+            <form action="dashboard.jsp" method="get" style="display: inline-block;">
+                <input type="text" name="q" placeholder="Search by Name or ID..." 
+                       value="<%= request.getParameter("q") != null ? request.getParameter("q") : "" %>"
+                       style="width: 250px; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                <button type="submit" style="padding: 8px 15px; background-color: #007bff; color: white; border: none; border-radius: 4px;">Search</button>
+            </form>
+            <% if (request.getParameter("q") != null) { %>
+                <a href="dashboard.jsp" style="margin-left: 10px; text-decoration: none; color: #dc3545; font-weight: bold;">Reset</a>
+            <% } %>
+        </div>
         <table>
             <thead>
                 <tr>
@@ -100,7 +111,24 @@
             <tbody>
                 <%
                     ReservationDAO dao = new ReservationDAO();
-                    List<Reservation> list = dao.getAllReservations();
+                    List<Reservation> list;
+                    
+                    String searchQuery = request.getParameter("q");
+                    
+                    if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+                        list = dao.searchReservations(searchQuery);
+                    } else {
+                        list = dao.getAllReservations();
+                    }
+                    
+                    if (list.isEmpty()) {
+                %>
+                    <tr>
+                        <td colspan="7" style="text-align:center; color: red;">No reservations found.</td>
+                    </tr>
+                <%
+                    }
+                    
                     for (Reservation r : list) {
                 %>
                 <tr>

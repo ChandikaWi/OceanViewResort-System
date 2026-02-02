@@ -61,4 +61,35 @@ public class ReservationDAO {
         }
         return list;
     }
+
+    public List<Reservation> searchReservations(String query) {
+        List<Reservation> list = new ArrayList<>();
+        String sql = "SELECT * FROM reservations WHERE guest_name LIKE ? OR CAST(res_id AS CHAR) LIKE ?";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            String searchPattern = "%" + query + "%"; 
+            stmt.setString(1, searchPattern);
+            stmt.setString(2, searchPattern);
+            
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Reservation res = new Reservation();
+                    res.setId(rs.getInt("res_id"));
+                    res.setGuestName(rs.getString("guest_name"));
+                    res.setAddress(rs.getString("address"));
+                    res.setContactNumber(rs.getString("contact_number"));
+                    res.setRoomType(rs.getString("room_type"));
+                    res.setCheckIn(rs.getDate("check_in"));
+                    res.setCheckOut(rs.getDate("check_out"));
+                    res.setTotalCost(rs.getBigDecimal("total_cost"));
+                    list.add(res);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 }
