@@ -44,20 +44,22 @@
     <button class="openbtn" onclick="toggleNav()">&#9776;</button>
 
     <div id="mySidebar" class="sidebar">
-        <div style="text-align: center; color: white; margin-bottom: 30px; white-space: nowrap;">
-            <span class="menu-text" style="font-weight: bold; font-size: 18px;">Ocean View<br>Resort</span>
-        </div>
-
-        <a href="#addSection">
-            <span class="icon">&#10133;</span> <span class="menu-text">New Booking</span>
-        </a>
         <a href="#listSection">
             <span class="icon">&#128196;</span> <span class="menu-text">Reservations</span>
         </a>
         <a href="BillServlet?id=last" onclick="alert('Please select a specific user from the list to print bill.')">
             <span class="icon">&#128424;</span> <span class="menu-text">Print Bill</span>
         </a>
-        
+
+        <% 
+            String userRole = (String) session.getAttribute("role");
+            if ("ADMIN".equals(userRole)) { 
+        %>
+            <a href="manage_staff.jsp">
+                <span class="icon">&#128100;</span> <span class="menu-text">Manage Staff</span>
+            </a>
+        <% } %>
+
         <a href="logout.jsp" style="margin-top: 50px; color: #ff6b6b;">
             <span class="icon">&#128682;</span> <span class="menu-text">Logout</span>
         </a>

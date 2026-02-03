@@ -24,35 +24,40 @@ import javax.servlet.http.HttpSession;
 @WebServlet("/AuthServlet")
 public class AuthServlet extends HttpServlet {
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
         String u = request.getParameter("username");
         String p = request.getParameter("password");
 
-        if (validate(u, p)) {
+        String role = validateAndGetRole(u, p); 
+        
+        if (role != null) {
             HttpSession session = request.getSession();
             session.setAttribute("user", u);
+            session.setAttribute("role", role); 
             response.sendRedirect("dashboard.jsp");
         } else {
             response.sendRedirect("login.jsp?error=invalid");
         }
     }
 
-    private boolean validate(String username, String password) {
-        boolean status = false;
+    private String validateAndGetRole(String username, String password) {
+        String role = null;
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement("SELECT * FROM users WHERE username=? AND password=?")) {
+             PreparedStatement ps = conn.prepareStatement("SELECT role FROM users WHERE username=? AND password=?")) {
             
             ps.setString(1, username);
             ps.setString(2, password);
             
             try (ResultSet rs = ps.executeQuery()) {
-                status = rs.next();
+                if (rs.next()) {
+                    role = rs.getString("role"); 
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return status;
+        return role;
     }
 }
