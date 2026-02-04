@@ -48,7 +48,7 @@
         <a href="reservations.jsp">
             <span class="icon">&#128196;</span> <span class="menu-text">Reservations</span>
         </a>
-        <a href="BillServlet?id=last" onclick="alert('Please go to Reservations page and select a user to print bill.')">
+        <a href="javascript:void(0)" onclick="openBillModal()">
             <span class="icon">&#128424;</span> <span class="menu-text">Print Bill</span>
         </a>
         
@@ -120,5 +120,37 @@
             </form>
         </div>
     </div>
+            
+    <div id="billModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeBillModal()">&times;</span>
+        <div class="modal-header">Find Reservation for Billing</div>
+        
+        <p>Enter Guest Name or Reservation ID:</p>
+        
+        <form action="reservations.jsp" method="get">
+            <input type="text" name="q" class="modal-input" placeholder="e.g., John or 1001" required>
+            <br>
+            <button type="submit" class="modal-btn">Find & Print</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openBillModal() {
+        document.getElementById("billModal").style.display = "block";
+    }
+
+    function closeBillModal() {
+        document.getElementById("billModal").style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        var modal = document.getElementById("billModal");
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>
 </body>
 </html>
