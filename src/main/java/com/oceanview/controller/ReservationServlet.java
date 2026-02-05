@@ -5,6 +5,7 @@
 package com.oceanview.controller;
 
 import com.oceanview.dao.ReservationDAO;
+import com.oceanview.dao.RoomTypeDAO;
 import com.oceanview.model.Reservation;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -38,34 +39,37 @@ public class ReservationServlet extends HttpServlet {
     }
 
     private void addReservation(HttpServletRequest request, HttpServletResponse response) 
-        throws IOException, ServletException {
-    try {
-        int resId = Integer.parseInt(request.getParameter("resId"));
-        
-        String name = request.getParameter("guestName");
-        String address = request.getParameter("address");
-        String contact = request.getParameter("contact");
-        String roomType = request.getParameter("roomType");
-        Date checkIn = Date.valueOf(request.getParameter("checkIn"));
-        Date checkOut = Date.valueOf(request.getParameter("checkOut"));
+            throws IOException, ServletException {
+        try {
+            int resId = Integer.parseInt(request.getParameter("resId"));
+            String name = request.getParameter("guestName");
+            String address = request.getParameter("address");
+            String contact = request.getParameter("contact");
+            String roomType = request.getParameter("roomType");
+            Date checkIn = Date.valueOf(request.getParameter("checkIn"));
+            Date checkOut = Date.valueOf(request.getParameter("checkOut"));
 
-        long days = ChronoUnit.DAYS.between(checkIn.toLocalDate(), checkOut.toLocalDate());
-        BigDecimal rate = "Suite".equals(roomType) ? new BigDecimal("150.00") : new BigDecimal("100.00");
-        BigDecimal totalCost = rate.multiply(new BigDecimal(days));
+            long days = ChronoUnit.DAYS.between(checkIn.toLocalDate(), checkOut.toLocalDate());
+            if (days == 0) days = 1; 
+            
+            RoomTypeDAO roomDao = new RoomTypeDAO();
+            BigDecimal rate = roomDao.getRoomPrice(roomType);
+            
+            BigDecimal totalCost = rate.multiply(new BigDecimal(days));
 
-        Reservation res = new Reservation(name, address, contact, roomType, checkIn, checkOut, totalCost);
-        res.setId(resId); 
-        
-        if (reservationDAO.addReservation(res)) {
-            response.sendRedirect("dashboard.jsp?success=true");
-        } else {
-            response.sendRedirect("dashboard.jsp?error=true");
+            Reservation res = new Reservation(name, address, contact, roomType, checkIn, checkOut, totalCost);
+            res.setId(resId);
+            
+            if (reservationDAO.addReservation(res)) {
+                response.sendRedirect("dashboard.jsp?success=true");
+            } else {
+                response.sendRedirect("dashboard.jsp?error=true");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect("dashboard.jsp?error=invalid_data");
         }
-    } catch (Exception e) {
-        e.printStackTrace();
-        response.sendRedirect("dashboard.jsp?error=duplicate_or_invalid");
     }
-}
     
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {

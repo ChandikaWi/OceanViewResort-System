@@ -46,6 +46,9 @@
         <a href="manage_staff.jsp" style="background-color: #34495e; border-left: 5px solid #1abc9c;">
             <span class="icon">&#128100;</span> <span class="menu-text">Manage Staff</span>
         </a>
+        <a href="manage_rooms.jsp">
+            <span class="icon">&#128716;</span> <span class="menu-text">Manage Rooms</span>
+        </a>
         <a href="logout.jsp" style="margin-top: 50px; color: #ff6b6b;">
             <span class="icon">&#128682;</span> <span class="menu-text">Logout</span>
         </a>
@@ -230,7 +233,6 @@
                 modal.style.display = "none";
             }
         }
-    </script>
-    
+    </script>    
 </body>
 </html>

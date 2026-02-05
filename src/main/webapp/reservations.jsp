@@ -52,6 +52,9 @@
             <a href="manage_staff.jsp">
                 <span class="icon">&#128100;</span> <span class="menu-text">Manage Staff</span>
             </a>
+            <a href="manage_rooms.jsp">
+                <span class="icon">&#128716;</span> <span class="menu-text">Manage Rooms</span>
+            </a>
         <% } %>
 
         <a href="logout.jsp" style="margin-top: 50px; color: #ff6b6b;">

@@ -4,7 +4,10 @@
     Author     : Chand
 --%>
 
+<%@page import="java.util.List"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="com.oceanview.dao.RoomTypeDAO"%>
+<%@page import="com.oceanview.model.RoomType"%>
 <%
     if (session.getAttribute("user") == null) {
         response.sendRedirect("login.jsp");
@@ -59,6 +62,9 @@
             <a href="manage_staff.jsp">
                 <span class="icon">&#128100;</span> <span class="menu-text">Manage Staff</span>
             </a>
+            <a href="manage_rooms.jsp">
+                <span class="icon">&#128716;</span> <span class="menu-text">Manage Rooms</span>
+            </a>
         <% } %>
 
         <a href="logout.jsp" style="margin-top: 50px; color: #ff6b6b;">
@@ -103,9 +109,18 @@
                 </div>
                 <div class="form-group">
                     <label>Room Type</label>
-                    <select name="roomType">
-                        <option value="Standard">Standard ($100/night)</option>
-                        <option value="Suite">Suite ($150/night)</option>
+                    <select name="roomType" required>
+                        <option value="" disabled selected>Select a Room...</option>
+                        <%
+                            RoomTypeDAO roomDao = new RoomTypeDAO();
+                            List<RoomType> rooms = roomDao.getAllRoomTypes();
+                            
+                            for(RoomType room : rooms) {
+                        %>
+                            <option value="<%= room.getTypeName() %>">
+                                <%= room.getTypeName() %> ($<%= room.getPrice() %>/night)
+                            </option>
+                        <% } %>
                     </select>
                 </div>
                 <div class="form-group">
