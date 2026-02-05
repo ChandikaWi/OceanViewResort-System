@@ -8,27 +8,53 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Ocean View Resort - Login</title>
+    <title>Staff Login - Ocean View Resort</title>
     <link rel="stylesheet" href="css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body>
-    <div class="container" style="max-width: 400px; margin-top: 100px;">
-        <h2 style="text-align: center;">Staff Login</h2>
-            <form action="AuthServlet" method="post">
-                <div class="form-group">
-                    <label>Username</label>
-                    <input type="text" name="username" required>
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" name="password" required>
-                </div>
-                <button type="submit" style="width: 100%;">Login</button>
+<body class="login-body">
 
-                <div style="text-align: center; margin-top: 15px;">
-                    <a href="help.jsp" style="color: #007bff; text-decoration: none; font-size: 14px;">Need Help?</a>
-                </div>
-            </form>
+    <div class="login-card">
+        <div style="margin-bottom: 20px;">
+            <span style="font-size: 50px; color: #1abc9c;">&#127968;</span>
+            <h2 style="color: #2c3e50; margin: 10px 0;">Staff Portal</h2>
+            <p style="color: #7f8c8d; font-size: 14px;">Please sign in to continue</p>
+        </div>
+
+        <% 
+            String error = request.getParameter("error");
+            if (error != null && error.equals("invalid")) {
+        %>
+            <div class="error-msg" style="display: block;">
+                &#9888; Invalid Username or Password!
+            </div>
+        <% 
+            } else if (error != null && error.equals("logout")) {
+        %>
+            <div class="error-msg" style="background-color: #2ecc71; display: block;">
+                &#10004; You have been logged out.
+            </div>
+        <% } %>
+
+        <form action="AuthServlet" method="post">
+            
+            <div class="input-container">
+                <input type="text" name="username" required>
+                <label>Username</label>
+            </div>
+
+            <div class="input-container">
+                <input type="password" name="password" required>
+                <label>Password</label>
+            </div>
+
+            <button type="submit" class="login-btn">Login</button>
+
+            <div style="margin-top: 20px; font-size: 13px;">
+                <a href="help.jsp" style="color: #1abc9c; text-decoration: none;">Need Help?</a>
+            </div>
+        </form>
     </div>
+
 </body>
 </html>
