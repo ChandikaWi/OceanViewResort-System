@@ -41,6 +41,23 @@ public class UserDAO {
             return false;
         }
     }
+    
+    public boolean updateUser(User user) {
+        String sql = "UPDATE users SET username = ?, password = ?, role = ? WHERE id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setString(1, user.getUsername());
+            stmt.setString(2, user.getPassword());
+            stmt.setString(3, user.getRole());
+            stmt.setInt(4, user.getId());
+            
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     public List<User> getAllUsers() {
         List<User> list = new ArrayList<>();

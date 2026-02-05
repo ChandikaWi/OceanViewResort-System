@@ -5,6 +5,7 @@
 package com.oceanview.controller;
 
 import com.oceanview.dao.UserDAO;
+import com.oceanview.model.User;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -30,7 +31,6 @@ public class UserServlet extends HttpServlet {
             String u = request.getParameter("username");
             String p = request.getParameter("password");
             String r = request.getParameter("role");
-            
             if(dao.addUser(u, p, r)) {
                 response.sendRedirect("manage_staff.jsp?success=added");
             } else {
@@ -41,6 +41,20 @@ public class UserServlet extends HttpServlet {
             int id = Integer.parseInt(request.getParameter("id"));
             if(dao.deleteUser(id)) {
                 response.sendRedirect("manage_staff.jsp?success=deleted");
+            } else {
+                response.sendRedirect("manage_staff.jsp?error=fail");
+            }
+        }
+        else if ("update".equals(action)) {
+            int id = Integer.parseInt(request.getParameter("id"));
+            String u = request.getParameter("username");
+            String p = request.getParameter("password");
+            String r = request.getParameter("role");
+            
+            User user = new User(id, u, p, r);
+            
+            if(dao.updateUser(user)) {
+                response.sendRedirect("manage_staff.jsp?success=updated");
             } else {
                 response.sendRedirect("manage_staff.jsp?error=fail");
             }
