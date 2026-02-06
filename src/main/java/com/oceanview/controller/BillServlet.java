@@ -9,6 +9,7 @@ import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import com.oceanview.dao.DBConnection;
+import com.oceanview.dao.RoomTypeDAO; 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -49,16 +50,16 @@ public class BillServlet extends HttpServlet {
             if (rs.next()) {
                 int resId = rs.getInt("res_id");
                 String guestName = rs.getString("guest_name");
-                String address = rs.getString("address");
-                String contact = rs.getString("contact_number");
-                String roomType = rs.getString("room_type");
+                String roomType = rs.getString("room_type"); 
                 Date checkIn = rs.getDate("check_in");
                 Date checkOut = rs.getDate("check_out");
 
                 long nights = ChronoUnit.DAYS.between(checkIn.toLocalDate(), checkOut.toLocalDate());
                 if (nights == 0) nights = 1;
                 
-                BigDecimal rate = "Suite".equals(roomType) ? new BigDecimal("150.00") : new BigDecimal("100.00");
+                RoomTypeDAO roomDao = new RoomTypeDAO();
+                BigDecimal rate = roomDao.getRoomPrice(roomType); 
+                
                 BigDecimal total = rate.multiply(new BigDecimal(nights));
 
                 response.setContentType("application/pdf");
@@ -68,6 +69,7 @@ public class BillServlet extends HttpServlet {
                 PdfWriter.getInstance(doc, response.getOutputStream());
                 doc.open();
 
+                
                 Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 24, Color.BLUE);
                 Paragraph title = new Paragraph("OCEAN VIEW RESORT", titleFont);
                 title.setAlignment(Element.ALIGN_CENTER);
@@ -81,7 +83,7 @@ public class BillServlet extends HttpServlet {
 
                 doc.add(new Paragraph("______________________________________________________________________________"));
                 doc.add(new Paragraph(" ")); 
-                
+
                 PdfPTable metaTable = new PdfPTable(2);
                 metaTable.setWidthPercentage(100);
                 metaTable.addCell(getCell("Bill To: " + guestName, PdfPCell.NO_BORDER));
@@ -102,9 +104,9 @@ public class BillServlet extends HttpServlet {
                 addHeader(table, "Total (USD)");
 
                 table.addCell(roomType + " Room Stay");
-                table.addCell("$" + rate);
+                table.addCell("$" + rate);    
                 table.addCell(String.valueOf(nights));
-                table.addCell("$" + total);
+                table.addCell("$" + total);   
 
                 doc.add(table);
 
@@ -123,11 +125,11 @@ public class BillServlet extends HttpServlet {
                 
                 doc.close();
             } else {
-                response.sendRedirect("dashboard.jsp?error=not_found");
+                response.sendRedirect("reservations.jsp?error=not_found");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            throw new ServletException(e); 
+            throw new ServletException(e);
         }
     }
 
@@ -136,7 +138,7 @@ public class BillServlet extends HttpServlet {
         cell.setBorder(border);
         return cell;
     }
-
+    
     private PdfPCell getCell(String text, int border, int align) {
         PdfPCell cell = getCell(text, border);
         cell.setHorizontalAlignment(align);
