@@ -56,6 +56,19 @@
                 <span class="icon">&#128716;</span> <span class="menu-text">Manage Rooms</span>
             </a>
         <% } %>
+        
+        <% 
+            String roleForStats = (String) session.getAttribute("role");
+            if ("ADMIN".equals(roleForStats)) { 
+        %>
+            <a href="statistics_admin.jsp">
+                <span class="icon">&#128200;</span> <span class="menu-text">Statistics</span>
+            </a>
+        <% } else { %>
+            <a href="statistics_staff.jsp">
+                <span class="icon">&#128202;</span> <span class="menu-text">Statistics</span>
+            </a>
+        <% } %>
 
         <a href="logout.jsp" style="margin-top: 50px; color: #ff6b6b;">
             <span class="icon">&#128682;</span> <span class="menu-text">Logout</span>
