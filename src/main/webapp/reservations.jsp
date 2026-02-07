@@ -4,6 +4,9 @@
     Author     : Chand
 --%>
 
+<%@page import="java.math.BigDecimal"%>
+<%@page import="java.time.temporal.ChronoUnit"%>
+<%@page import="com.oceanview.dao.RoomTypeDAO"%>
 <%@page import="java.util.List"%>
 <%@page import="com.oceanview.dao.ReservationDAO"%>
 <%@page import="com.oceanview.model.Reservation"%>
@@ -52,6 +55,7 @@
             <a href="manage_staff.jsp">
                 <span class="icon">&#128100;</span> <span class="menu-text">Manage Staff</span>
             </a>
+            
             <a href="manage_rooms.jsp">
                 <span class="icon">&#128716;</span> <span class="menu-text">Manage Rooms</span>
             </a>
@@ -106,6 +110,7 @@
                 <tbody>
                     <%
                         ReservationDAO dao = new ReservationDAO();
+                        RoomTypeDAO roomDao = new RoomTypeDAO(); 
                         List<Reservation> list;
                         String searchQuery = request.getParameter("q");
                         
@@ -123,6 +128,11 @@
                     <%
                         }
                         for (Reservation r : list) {
+                            long nights = ChronoUnit.DAYS.between(r.getCheckIn().toLocalDate(), r.getCheckOut().toLocalDate());
+                            if (nights == 0) nights = 1;
+                            
+                            BigDecimal rate = roomDao.getRoomPrice(r.getRoomType());
+                            BigDecimal grandTotal = rate.multiply(new BigDecimal(nights));
                     %>
                     <tr>
                         <td><%= r.getId() %></td>
@@ -130,7 +140,9 @@
                         <td><%= r.getRoomType() %></td>
                         <td><%= r.getCheckIn() %></td>
                         <td><%= r.getCheckOut() %></td>
-                        <td>$<%= r.getTotalCost() %></td>
+                        
+                        <td style="font-weight: bold; color: #2c3e50;">$<%= grandTotal %></td>
+                        
                         <td>
                             <a href="BillServlet?id=<%= r.getId() %>" target="_blank" 
                                style="background-color: #17a2b8; color: white; padding: 5px 10px; text-decoration: none; border-radius: 4px; font-size: 14px;">
@@ -143,37 +155,35 @@
             </table>
         </div>
     </div>
-                
+    
     <div id="billModal" class="modal">
-    <div class="modal-content">
-        <span class="close-modal" onclick="closeBillModal()">&times;</span>
-        <div class="modal-header">Find Reservation for Billing</div>
-        
-        <p>Enter Guest Name or Reservation ID:</p>
-        
-        <form action="reservations.jsp" method="get">
-            <input type="text" name="q" class="modal-input" placeholder="e.g., John or 1001" required>
-            <br>
-            <button type="submit" class="modal-btn">Find & Print</button>
-        </form>
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeBillModal()">&times;</span>
+            <div class="modal-header">Find Reservation for Billing</div>
+            
+            <p>Enter Guest Name or Reservation ID:</p>
+            
+            <form action="reservations.jsp" method="get">
+                <input type="text" name="q" class="modal-input" placeholder="e.g., John or 1001" required>
+                <br>
+                <button type="submit" class="modal-btn">Find & Print</button>
+            </form>
+        </div>
     </div>
-</div>
 
-<script>
-    function openBillModal() {
-        document.getElementById("billModal").style.display = "block";
-    }
-
-    function closeBillModal() {
-        document.getElementById("billModal").style.display = "none";
-    }
-
-    window.onclick = function(event) {
-        var modal = document.getElementById("billModal");
-        if (event.target == modal) {
-            modal.style.display = "none";
+    <script>
+        function openBillModal() {
+            document.getElementById("billModal").style.display = "block";
         }
-    }
-</script>
+        function closeBillModal() {
+            document.getElementById("billModal").style.display = "none";
+        }
+        window.onclick = function(event) {
+            var modal = document.getElementById("billModal");
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
 </body>
 </html>
