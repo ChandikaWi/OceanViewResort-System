@@ -16,7 +16,10 @@ import java.util.Map;
 public class StatsDAO {
 
     public double getTotalRevenue() {
-        String sql = "SELECT SUM(total_cost) FROM reservations";
+        String sql = "SELECT SUM(GREATEST(DATEDIFF(r.check_out, r.check_in), 1) * rt.price) " +
+                     "FROM reservations r " +
+                     "JOIN room_types rt ON r.room_type = rt.type_name";
+                     
         try (Connection conn = DBConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -40,7 +43,13 @@ public class StatsDAO {
 
     public Map<String, Double> getMonthlyRevenue() {
         Map<String, Double> data = new HashMap<>();
-        String sql = "SELECT MONTHNAME(check_in), SUM(total_cost) FROM reservations GROUP BY MONTHNAME(check_in) ORDER BY MIN(check_in)";
+        String sql = "SELECT MONTHNAME(r.check_in), " +
+                     "SUM(GREATEST(DATEDIFF(r.check_out, r.check_in), 1) * rt.price) " +
+                     "FROM reservations r " +
+                     "JOIN room_types rt ON r.room_type = rt.type_name " +
+                     "GROUP BY MONTHNAME(r.check_in) " +
+                     "ORDER BY MIN(r.check_in)";
+                     
         try (Connection conn = DBConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
