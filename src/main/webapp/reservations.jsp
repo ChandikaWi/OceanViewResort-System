@@ -95,6 +95,11 @@
         </div>
 
         <div class="container" style="max-width: 100%;">
+            <% if ("deleted".equals(request.getParameter("success"))) { %>
+                <div class="alert" style="background-color: #f8d7da; color: #721c24; margin-bottom: 15px; padding: 10px; border-radius: 4px;">
+                    Reservation deleted successfully.
+                </div>
+            <% } %>
             <table>
                 <thead>
                     <tr>
@@ -144,10 +149,19 @@
                         <td style="font-weight: bold; color: #2c3e50;">$<%= grandTotal %></td>
                         
                         <td>
-                            <a href="BillServlet?id=<%= r.getId() %>" target="_blank" 
-                               style="background-color: #17a2b8; color: white; padding: 5px 10px; text-decoration: none; border-radius: 4px; font-size: 14px;">
-                               Print Bill
-                            </a>
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                
+                                <a href="BillServlet?id=<%= r.getId() %>" target="_blank" 
+                                   style="background-color: #17a2b8; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-size: 13px; display: inline-block; white-space: nowrap;">
+                                   &#128424; Print
+                                </a>
+
+                                <button type="button" onclick="openDeleteModal('<%= r.getId() %>')"
+                                        style="background-color: #dc3545; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; display: inline-block; white-space: nowrap;">
+                                    &#128465; Delete
+                                </button>
+                                
+                            </div>
                         </td>
                     </tr>
                     <% } %>
@@ -170,6 +184,32 @@
             </form>
         </div>
     </div>
+                
+    <div id="deleteModal" class="modal">
+        <div class="modal-content" style="width: 400px; text-align: center; border-top: 5px solid #dc3545;">
+            <span class="close-modal" onclick="closeDeleteModal()">&times;</span>
+            
+            <div style="font-size: 50px; color: #dc3545; margin-bottom: 10px;">&#9888;</div>
+            <h3 style="margin-top: 0; color: #333;">Delete Reservation?</h3>
+            <p style="color: #666;">Are you sure you want to cancel and delete this reservation?</p>
+            
+            <form action="ReservationServlet" method="post">
+                <input type="hidden" name="action" value="delete">
+                <input type="hidden" id="deleteId" name="id">
+                
+                <div style="margin-top: 20px;">
+                    <button type="button" onclick="closeDeleteModal()" 
+                            style="background-color: #ccc; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px;">
+                        Cancel
+                    </button>
+                    <button type="submit" 
+                            style="background-color: #dc3545; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">
+                        Confirm Delete
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <script>
         function openBillModal() {
@@ -178,12 +218,18 @@
         function closeBillModal() {
             document.getElementById("billModal").style.display = "none";
         }
-        window.onclick = function(event) {
-            var modal = document.getElementById("billModal");
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
+        function openDeleteModal(id) {
+            document.getElementById("deleteId").value = id;
+            document.getElementById("deleteModal").style.display = "block";
         }
-    </script>
+        function closeDeleteModal() {
+            document.getElementById("deleteModal").style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == document.getElementById("billModal")) closeBillModal();
+            if (event.target == document.getElementById("deleteModal")) closeDeleteModal();
+        }
+    </script>  
 </body>
 </html>

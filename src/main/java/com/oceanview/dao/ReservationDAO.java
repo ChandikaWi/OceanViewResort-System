@@ -35,7 +35,19 @@ public class ReservationDAO {
         e.printStackTrace();
         return false;
     }
-}
+    }
+    
+    public boolean deleteReservation(int id) {
+        String sql = "DELETE FROM reservations WHERE res_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     public List<Reservation> getAllReservations() {
         List<Reservation> list = new ArrayList<>();

@@ -36,6 +36,14 @@ public class ReservationServlet extends HttpServlet {
         if ("add".equals(action)) {
             addReservation(request, response);
         }
+        else if ("delete".equals(action)) {
+            int id = Integer.parseInt(request.getParameter("id"));
+            if(reservationDAO.deleteReservation(id)) {
+                response.sendRedirect("reservations.jsp?success=deleted");
+            } else {
+                response.sendRedirect("reservations.jsp?error=delete_failed");
+            }
+        }
     }
 
     private void addReservation(HttpServletRequest request, HttpServletResponse response) 
