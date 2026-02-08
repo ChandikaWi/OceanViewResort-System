@@ -134,5 +134,87 @@
             options: { plugins: { title: { display: true, text: 'Room Preference' } } }
         });
     </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+        .pdf-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #c0392b;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            cursor: pointer;
+            z-index: 1000;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .pdf-btn:hover {
+            background-color: #a93226;
+            transform: translateY(-3px);
+        }
+    </style>
+
+    <button onclick="downloadReport()" class="pdf-btn" id="downloadBtn">
+        <span>&#128196;</span> Download Report
+    </button>
+
+    <script>
+        async function downloadReport() {
+            const { jsPDF } = window.jspdf;
+            const btn = document.getElementById('downloadBtn');
+            const content = document.getElementById('main'); 
+
+            btn.style.display = 'none';
+
+            const originalBg = content.style.backgroundColor;
+            content.style.backgroundColor = "#ffffff"; 
+
+            html2canvas(content, {
+                scale: 2, 
+                useCORS: true 
+            }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+
+                pdf.setFillColor(44, 62, 80); 
+                pdf.rect(0, 0, pageWidth, 25, 'F');
+
+                pdf.setFontSize(18);
+                pdf.setTextColor(255, 255, 255); 
+                pdf.setFont("helvetica", "bold");
+                pdf.text("OCEAN VIEW RESORT", 15, 12);
+
+                pdf.setFontSize(10);
+                pdf.setFont("helvetica", "normal");
+                pdf.text("OFFICIAL STATISTICAL REPORT", 15, 19);
+
+                const today = new Date().toLocaleDateString();
+                pdf.text("Date: " + today, pageWidth - 40, 15);
+
+                const imgWidth = pageWidth - 20; 
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+                pdf.addImage(imgData, 'PNG', 10, 30, imgWidth, imgHeight);
+
+                pdf.save("OceanView_Statistics_Report.pdf");
+
+                btn.style.display = 'flex';
+                content.style.backgroundColor = originalBg;
+            });
+        }
+    </script>
 </body>
 </html>
