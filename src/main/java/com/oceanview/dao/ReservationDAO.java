@@ -17,24 +17,25 @@ import java.util.List;
 public class ReservationDAO {
 
     public boolean addReservation(Reservation res) {
-    String sql = "INSERT INTO reservations (res_id, guest_name, address, contact_number, room_type, check_in, check_out, total_cost) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    try (Connection conn = DBConnection.getConnection();
-         PreparedStatement stmt = conn.prepareStatement(sql)) {
-        
-        stmt.setInt(1, res.getId()); 
-        stmt.setString(2, res.getGuestName());
-        stmt.setString(3, res.getAddress());
-        stmt.setString(4, res.getContactNumber());
-        stmt.setString(5, res.getRoomType());
-        stmt.setDate(6, res.getCheckIn());
-        stmt.setDate(7, res.getCheckOut());
-        stmt.setBigDecimal(8, res.getTotalCost());
-        
-        return stmt.executeUpdate() > 0;
-    } catch (SQLException e) {
-        e.printStackTrace();
-        return false;
-    }
+        String sql = "INSERT INTO reservations (res_id, guest_name, address, contact_number, email, room_type, check_in, check_out, total_cost) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setInt(1, res.getId());
+            stmt.setString(2, res.getGuestName());
+            stmt.setString(3, res.getAddress());
+            stmt.setString(4, res.getContactNumber());
+            stmt.setString(5, res.getEmail());
+            stmt.setString(6, res.getRoomType());
+            stmt.setDate(7, res.getCheckIn());
+            stmt.setDate(8, res.getCheckOut());
+            stmt.setBigDecimal(9, res.getTotalCost());
+            
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
     
     public boolean deleteReservation(int id) {

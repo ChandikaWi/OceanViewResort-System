@@ -53,6 +53,7 @@ public class ReservationServlet extends HttpServlet {
             String name = request.getParameter("guestName");
             String address = request.getParameter("address");
             String contact = request.getParameter("contact");
+            String email = request.getParameter("email");
             String roomType = request.getParameter("roomType");
             Date checkIn = Date.valueOf(request.getParameter("checkIn"));
             Date checkOut = Date.valueOf(request.getParameter("checkOut"));
@@ -65,11 +66,17 @@ public class ReservationServlet extends HttpServlet {
             
             BigDecimal totalCost = rate.multiply(new BigDecimal(days));
 
-            Reservation res = new Reservation(name, address, contact, roomType, checkIn, checkOut, totalCost);
+            Reservation res = new Reservation(name, address, contact, email, roomType, checkIn, checkOut, totalCost);
             res.setId(resId);
             
             if (reservationDAO.addReservation(res)) {
-                response.sendRedirect("dashboard.jsp?success=true");
+                new Thread(() -> {
+            com.oceanview.util.EmailService.sendBookingConfirmation(
+                email, name, resId, checkIn.toString(), checkOut.toString()
+            );
+        }).start();
+
+        response.sendRedirect("dashboard.jsp?success=true");
             } else {
                 response.sendRedirect("dashboard.jsp?error=true");
             }

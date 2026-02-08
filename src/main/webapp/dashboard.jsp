@@ -121,6 +121,10 @@
                     <input type="text" name="contact" pattern="[0-9]{10}" title="10 digit phone number" required>
                 </div>
                 <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" name="email" placeholder="guest@example.com" required>
+                </div>
+                <div class="form-group">
                     <label>Room Type</label>
                     <select name="roomType" required>
                         <option value="" disabled selected>Select a Room...</option>

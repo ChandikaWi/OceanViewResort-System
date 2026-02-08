@@ -9,7 +9,9 @@ import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import com.oceanview.dao.DBConnection;
-import com.oceanview.dao.RoomTypeDAO; 
+import com.oceanview.dao.RoomTypeDAO;
+import com.oceanview.util.EmailService; 
+import java.io.ByteArrayOutputStream;   
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -41,6 +43,8 @@ public class BillServlet extends HttpServlet {
             return;
         }
 
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement("SELECT * FROM reservations WHERE res_id = ?")) {
             
@@ -50,23 +54,20 @@ public class BillServlet extends HttpServlet {
             if (rs.next()) {
                 int resId = rs.getInt("res_id");
                 String guestName = rs.getString("guest_name");
-                String roomType = rs.getString("room_type"); 
+                String email = rs.getString("email");
+                String roomType = rs.getString("room_type");
                 Date checkIn = rs.getDate("check_in");
                 Date checkOut = rs.getDate("check_out");
 
                 long nights = ChronoUnit.DAYS.between(checkIn.toLocalDate(), checkOut.toLocalDate());
-                if (nights == 0) nights = 1;
+                if (nights == 0) nights = 1; 
                 
                 RoomTypeDAO roomDao = new RoomTypeDAO();
                 BigDecimal rate = roomDao.getRoomPrice(roomType); 
-                
-                BigDecimal total = rate.multiply(new BigDecimal(nights));
-
-                response.setContentType("application/pdf");
-                response.setHeader("Content-Disposition", "attachment; filename=Bill_" + resId + ".pdf");
+                BigDecimal total = rate.multiply(new BigDecimal(nights)); 
 
                 Document doc = new Document();
-                PdfWriter.getInstance(doc, response.getOutputStream());
+                PdfWriter.getInstance(doc, baos);
                 doc.open();
 
                 
@@ -82,7 +83,7 @@ public class BillServlet extends HttpServlet {
                 doc.add(subtitle);
 
                 doc.add(new Paragraph("______________________________________________________________________________"));
-                doc.add(new Paragraph(" ")); 
+                doc.add(new Paragraph(" "));
 
                 PdfPTable metaTable = new PdfPTable(2);
                 metaTable.setWidthPercentage(100);
@@ -93,7 +94,7 @@ public class BillServlet extends HttpServlet {
                 doc.add(metaTable);
                 doc.add(new Paragraph(" "));
 
-                PdfPTable table = new PdfPTable(4); 
+                PdfPTable table = new PdfPTable(4);
                 table.setWidthPercentage(100);
                 table.setSpacingBefore(10f);
                 table.setSpacingAfter(10f);
@@ -104,9 +105,9 @@ public class BillServlet extends HttpServlet {
                 addHeader(table, "Total (USD)");
 
                 table.addCell(roomType + " Room Stay");
-                table.addCell("$" + rate);    
+                table.addCell("$" + rate);
                 table.addCell(String.valueOf(nights));
-                table.addCell("$" + total);   
+                table.addCell("$" + total);
 
                 doc.add(table);
 
@@ -123,7 +124,21 @@ public class BillServlet extends HttpServlet {
                 doc.add(footer);
 
                 
-                doc.close();
+                doc.close(); 
+                
+                if (email != null && !email.trim().isEmpty()) {
+                    new Thread(() -> {
+                        EmailService.sendBillWithAttachment(email, guestName, baos.toByteArray());
+                    }).start();
+                }
+
+                response.setContentType("application/pdf");
+                response.setHeader("Content-Disposition", "attachment; filename=Bill_" + resId + ".pdf");
+                response.setContentLength(baos.size());
+                
+                response.getOutputStream().write(baos.toByteArray());
+                response.getOutputStream().flush();
+
             } else {
                 response.sendRedirect("reservations.jsp?error=not_found");
             }
