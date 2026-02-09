@@ -15,8 +15,8 @@
     }
     
     String role = (String) session.getAttribute("role");
-    if (role == null || !"ADMIN".equals(role)) {
-        response.sendRedirect("dashboard.jsp");
+    if (!"ADMIN".equals(role)) {
+        response.sendRedirect("dashboard.jsp?error=access_denied");
         return;
     }
 %>

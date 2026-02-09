@@ -8,8 +8,14 @@
 <%@page import="com.oceanview.dao.StatsDAO"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
-    if (session.getAttribute("user") == null || !"ADMIN".equals(session.getAttribute("role"))) {
-        response.sendRedirect("dashboard.jsp");
+    if (session.getAttribute("user") == null) {
+        response.sendRedirect("login.jsp");
+        return;
+    }
+    
+    String role = (String) session.getAttribute("role");
+    if (!"ADMIN".equals(role)) {
+        response.sendRedirect("dashboard.jsp?error=access_denied");
         return;
     }
     

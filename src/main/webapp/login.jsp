@@ -38,14 +38,31 @@
 
         <form action="AuthServlet" method="post">
             
+            <%
+                String savedUser = "";
+                Cookie[] cookies = request.getCookies();
+                if (cookies != null) {
+                    for (Cookie c : cookies) {
+                        if ("remember_user".equals(c.getName())) {
+                            savedUser = c.getValue();
+                        }
+                    }
+                }
+            %>
+
             <div class="input-container">
-                <input type="text" name="username" required>
+                <input type="text" name="username" value="<%= savedUser %>" required>
                 <label>Username</label>
             </div>
 
             <div class="input-container">
                 <input type="password" name="password" required>
                 <label>Password</label>
+            </div>
+
+            <div class="remember-box">
+                <input type="checkbox" name="remember" id="chkRemember" <%= !savedUser.isEmpty() ? "checked" : "" %>>
+                <label for="chkRemember">Remember me</label>
             </div>
 
             <button type="submit" class="login-btn">Login</button>

@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie; 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,7 +25,7 @@ import javax.servlet.http.HttpSession;
 @WebServlet("/AuthServlet")
 public class AuthServlet extends HttpServlet {
 
-protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
         String u = request.getParameter("username");
@@ -33,10 +34,24 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
         String role = validateAndGetRole(u, p); 
         
         if (role != null) {
+
             HttpSession session = request.getSession();
-            session.setAttribute("user", u);
-            session.setAttribute("role", role); 
+            session.setAttribute("user", u);        
+            session.setAttribute("username", u);    
+            session.setAttribute("role", role);     
+
+            String remember = request.getParameter("remember");
+            Cookie cookie = new Cookie("remember_user", u);     
+            
+            if (remember != null) {
+                cookie.setMaxAge(60 * 60 * 24 * 7); 
+            } else {
+                cookie.setMaxAge(0); 
+            }
+            response.addCookie(cookie);
+
             response.sendRedirect("dashboard.jsp");
+            
         } else {
             response.sendRedirect("login.jsp?error=invalid");
         }
@@ -52,7 +67,7 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
             
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    role = rs.getString("role"); 
+                    role = rs.getString("role");
                 }
             }
         } catch (Exception e) {
