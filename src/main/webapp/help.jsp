@@ -50,79 +50,90 @@
 
     <div class="help-container">
         <h1>User Manual</h1>
-        <p style="color: #666; font-size: 16px;">Welcome to the Ocean View Resort Reservation System. Below you will find detailed instructions separated by user role.</p>
+        <p style="color: #666; font-size: 16px;">Welcome to the Ocean View Resort Reservation System. Below you will find detailed instructions regarding the latest features, including Email Automation and Inventory Management.</p>
 
         <h2 class="role-title">&#128100; Staff & Front Desk Guide</h2>
         <p><em>For all Front Desk Officers and Staff members.</em></p>
 
         <div class="step">
-            <h3><span class="step-icon">1</span> System Access & Navigation</h3>
+            <h3><span class="step-icon">1</span> Access & Login</h3>
             <ul>
-                <li><strong>Log In:</strong> Use the credentials provided by your manager. If you forget your password, contact an Admin.</li>
-                <li><strong>Sidebar Menu:</strong> The main menu is on the left. Click the <strong>&#9776;</strong> (Hamburger) button to expand or collapse it.</li>
+                <li><strong>Credentials:</strong> Log in using your username and password.</li>
+                <li><strong>Remember Me:</strong> Check the "Remember Me" box to keep your username saved for 7 days.</li>
+                <li><strong>Sidebar:</strong> Use the left menu to navigate. Click <strong>&#9776;</strong> to collapse/expand.</li>
             </ul>
         </div>
 
         <div class="step">
-            <h3><span class="step-icon">2</span> Managing Reservations</h3>
+            <h3><span class="step-icon">2</span> New Booking & Inventory</h3>
+            <p>Go to the <strong>New Booking</strong> (Dashboard) page:</p>
             <ul>
-                <li><strong>New Booking:</strong> Go to the Dashboard. Enter guest details and select a <strong>Room Type</strong> from the dropdown list.
-                <br><small>(Note: Room prices are automatically fetched from the database).</small></li>
-                <li><strong>Search:</strong> Click <strong>Reservations</strong> in the sidebar to search for guests by Name or ID.</li>
+                <li><strong>Email Required:</strong> You must enter the guest's <strong>Email Address</strong>. The system automatically sends a confirmation email upon success.</li>
+                <li><strong>Room Availability:</strong> When selecting a Room Type, the dropdown shows the <strong>Total Capacity</strong>. </li>
+                <li><strong>Validation:</strong> If a room type is fully booked for the selected dates, the system will show an error and prevent the booking.</li>
             </ul>
         </div>
 
         <div class="step">
-            <h3><span class="step-icon">3</span> Billing & Invoices</h3>
-            <p>You can generate professional PDF invoices in two ways:</p>
+            <h3><span class="step-icon">3</span> Managing Reservations</h3>
+            <p>Go to the <strong>Reservations</strong> page:</p>
+            <ul>
+                <li><strong>Search:</strong> Find guests by Name or ID.</li>
+                <li><strong>Delete:</strong> Click the red <span style="color:#dc3545; font-weight:bold;">Delete</span> button to cancel a booking. A warning popup will ask for confirmation.</li>
+                <li><strong>Total Bill:</strong> The table automatically calculates cost based on: <em>(Room Rate &times; Nights Stayed)</em>.</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3><span class="step-icon">4</span> Billing & Auto-Email</h3>
+            <p>Generating an invoice handles two tasks at once:</p>
             <ol>
-                <li><strong>Quick Print:</strong> Click <strong>"Print Bill"</strong> in the sidebar. A popup box will appear. Enter the Guest Name or ID to find and print.</li>
-                <li><strong>Table Print:</strong> Go to the <strong>Reservations</strong> page and click the teal <strong>Print Bill</strong> button next to any guest.</li>
+                <li>Click the teal <strong>Print Bill</strong> button next to a reservation (or use the sidebar popup).</li>
+                <li>The system downloads a <strong>PDF Invoice</strong> to your computer.</li>
+                <li>Simultaneously, the system <strong>Emails a copy</strong> of the PDF to the guest automatically.</li>
             </ol>
-            <p><em>The system automatically calculates the total based on: (Room Rate &times; Number of Nights).</em></p>
         </div>
 
         <div class="step">
-            <h3><span class="step-icon">4</span> Staff Statistics</h3>
-            <p>Click <strong>Statistics</strong> in the sidebar to view your daily workflow:</p>
+            <h3><span class="step-icon">5</span> Statistics & Reports</h3>
+            <p>Click <strong>Statistics</strong> in the sidebar:</p>
             <ul>
-                <li><strong>Arrivals:</strong> Number of guests checking in today.</li>
-                <li><strong>Departures:</strong> Number of guests checking out today.</li>
-                <li><strong>Workload Chart:</strong> A visual breakdown of today's tasks.</li>
+                <li>View today's Arrivals and Departures.</li>
+                <li><strong>Export:</strong> Click the floating red <strong>Download Report</strong> button (bottom-right) to save the dashboard as a formal PDF report.</li>
             </ul>
         </div>
 
         <hr style="margin-top: 50px; border: 0; border-top: 1px dashed #ccc;">
 
         <h2 class="role-title" style="background-color: #c0392b;">&#128736; Administrator Guide</h2>
-        <p><em>Exclusive features for Managers and Admins.</em></p>
+        <p><em>Exclusive features for Managers.</em></p>
 
         <div class="step" style="border-left-color: #c0392b;">
-            <h3><span class="step-icon" style="background-color: #c0392b;">A</span> Admin Dashboard (Statistics)</h3>
-            <p>When an Admin clicks <strong>Statistics</strong>, they see the Financial Dashboard:</p>
+            <h3><span class="step-icon" style="background-color: #c0392b;">A</span> Admin Dashboard & Revenue</h3>
+            <p>The Admin <strong>Statistics</strong> page offers financial insights:</p>
             <ul>
-                <li><strong>KPI Cards:</strong> View Total Revenue, Active Bookings, and Occupancy Rate.</li>
-                <li><strong>Charts:</strong> Analyze Monthly Revenue trends and Room Type popularity (Pie Chart).</li>
+                <li><strong>Real-time Revenue:</strong> Calculates total earnings from all active reservations.</li>
+                <li><strong>Visuals:</strong> Includes Bar Charts (Monthly Trends) and Pie Charts (Room Preferences).</li>
+                <li><strong>PDF Export:</strong> Like the staff page, you can download a "Management Report" using the floating red button.</li>
             </ul>
         </div>
 
         <div class="step" style="border-left-color: #c0392b;">
-            <h3><span class="step-icon" style="background-color: #c0392b;">B</span> Manage Staff Accounts</h3>
-            <p>Go to the <strong>Manage Staff</strong> page to control system access:</p>
+            <h3><span class="step-icon" style="background-color: #c0392b;">B</span> Staff Management</h3>
             <ul>
-                <li><strong>Create:</strong> Add new users with a Username, Password, and Role (Admin/Staff).</li>
-                <li><strong>Update:</strong> Click the <span style="background-color: #ffc107; padding: 2px 5px; border-radius: 3px; font-size: 12px;">Update</span> button to change passwords or roles via a popup.</li>
-                <li><strong>Delete:</strong> Remove accounts securely. A warning popup will ask for confirmation.</li>
+                <li>Create new accounts with specific roles (Admin vs Staff).</li>
+                <li><strong>Update:</strong> Click the Yellow button to change passwords or usernames via a popup.</li>
+                <li><strong>Delete:</strong> Click the Red button to remove access securely.</li>
             </ul>
         </div>
 
         <div class="step" style="border-left-color: #c0392b;">
-            <h3><span class="step-icon" style="background-color: #c0392b;">C</span> Manage Rooms & Rates</h3>
-            <p>Go to the <strong>Manage Rooms</strong> page to configure hotel inventory:</p>
+            <h3><span class="step-icon" style="background-color: #c0392b;">C</span> Room & Inventory Control</h3>
+            <p>Go to <strong>Manage Rooms</strong> to control the hotel layout:</p>
             <ul>
-                <li><strong>Add Room Type:</strong> Define new room categories (e.g., "Penthouse"), set the Price per Night, and add a Description.</li>
-                <li><strong>Room Images:</strong> To add an image, place the file in your project's <code>web/images/</code> folder and type the path (e.g., <code>images/room1.jpg</code>).</li>
-                <li><strong>Pricing Updates:</strong> Updating a price here immediately updates the billing calculation for all future reservations.</li>
+                <li><strong>Quantity (Inventory):</strong> You must set the <strong>Total Rooms</strong> (Quantity) for each type. This number is used to prevent overbooking.</li>
+                <li><strong>Pricing:</strong> Changing the price here updates future billing calculations.</li>
+                <li><strong>Images:</strong> Enter the path to images stored in the project folder (e.g., <code>images/suite.jpg</code>).</li>
             </ul>
         </div>
 
