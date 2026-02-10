@@ -58,10 +58,16 @@ public class ReservationServlet extends HttpServlet {
             Date checkIn = Date.valueOf(request.getParameter("checkIn"));
             Date checkOut = Date.valueOf(request.getParameter("checkOut"));
 
+            RoomTypeDAO roomDao = new RoomTypeDAO();
+
+            if (!roomDao.isRoomAvailable(roomType, checkIn, checkOut)) {
+                response.sendRedirect("dashboard.jsp?error=no_rooms");
+                return; 
+            }
+            
             long days = ChronoUnit.DAYS.between(checkIn.toLocalDate(), checkOut.toLocalDate());
             if (days == 0) days = 1; 
             
-            RoomTypeDAO roomDao = new RoomTypeDAO();
             BigDecimal rate = roomDao.getRoomPrice(roomType);
             
             BigDecimal totalCost = rate.multiply(new BigDecimal(days));
@@ -71,12 +77,12 @@ public class ReservationServlet extends HttpServlet {
             
             if (reservationDAO.addReservation(res)) {
                 new Thread(() -> {
-            com.oceanview.util.EmailService.sendBookingConfirmation(
-                email, name, resId, checkIn.toString(), checkOut.toString()
-            );
-        }).start();
+                    com.oceanview.util.EmailService.sendBookingConfirmation(
+                        email, name, resId, checkIn.toString(), checkOut.toString()
+                    );
+                }).start();
 
-        response.sendRedirect("dashboard.jsp?success=true");
+                response.sendRedirect("dashboard.jsp?success=true");
             } else {
                 response.sendRedirect("dashboard.jsp?error=true");
             }

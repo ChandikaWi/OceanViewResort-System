@@ -17,34 +17,30 @@ import java.util.List;
 public class RoomTypeDAO {
 
     public boolean addRoomType(RoomType room) {
-        String sql = "INSERT INTO room_types (type_name, price, description, image_url) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO room_types (type_name, price, description, image_url, quantity) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, room.getTypeName());
             stmt.setBigDecimal(2, room.getPrice());
             stmt.setString(3, room.getDescription());
             stmt.setString(4, room.getImageUrl());
+            stmt.setInt(5, room.getQuantity()); 
             return stmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+        } catch (SQLException e) { e.printStackTrace(); return false; }
     }
 
     public boolean updateRoomType(RoomType room) {
-        String sql = "UPDATE room_types SET type_name=?, price=?, description=?, image_url=? WHERE id=?";
+        String sql = "UPDATE room_types SET type_name=?, price=?, description=?, image_url=?, quantity=? WHERE id=?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, room.getTypeName());
             stmt.setBigDecimal(2, room.getPrice());
             stmt.setString(3, room.getDescription());
             stmt.setString(4, room.getImageUrl());
-            stmt.setInt(5, room.getId());
+            stmt.setInt(5, room.getQuantity()); 
+            stmt.setInt(6, room.getId());
             return stmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+        } catch (SQLException e) { e.printStackTrace(); return false; }
     }
 
     public boolean deleteRoomType(int id) {
@@ -71,12 +67,11 @@ public class RoomTypeDAO {
                     rs.getString("type_name"),
                     rs.getBigDecimal("price"),
                     rs.getString("description"),
-                    rs.getString("image_url")
+                    rs.getString("image_url"),
+                    rs.getInt("quantity") 
                 ));
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        } catch (SQLException e) { e.printStackTrace(); }
         return list;
     }
     
@@ -95,5 +90,36 @@ public class RoomTypeDAO {
             e.printStackTrace();
         }
         return java.math.BigDecimal.ZERO; 
+    }
+    
+    public boolean isRoomAvailable(String roomType, Date checkIn, Date checkOut) {
+        int totalRooms = 0;
+        int bookedRooms = 0;
+
+        try (Connection conn = DBConnection.getConnection()) {
+            String sqlTotal = "SELECT quantity FROM room_types WHERE type_name = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sqlTotal)) {
+                stmt.setString(1, roomType);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) totalRooms = rs.getInt("quantity");
+            }
+
+            String sqlCount = "SELECT COUNT(*) FROM reservations WHERE room_type = ? " +
+                              "AND (check_in < ? AND check_out > ?)";
+            
+            try (PreparedStatement stmt = conn.prepareStatement(sqlCount)) {
+                stmt.setString(1, roomType);
+                stmt.setDate(2, checkOut); 
+                stmt.setDate(3, checkIn);  
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) bookedRooms = rs.getInt(1);
+            }
+            
+            return (totalRooms - bookedRooms) > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false; 
+        }
     }
 }

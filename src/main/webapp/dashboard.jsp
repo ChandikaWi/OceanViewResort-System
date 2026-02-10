@@ -14,6 +14,11 @@
         return;
     }
 %>
+<% if ("no_rooms".equals(request.getParameter("error"))) { %>
+    <div class="alert" style="background-color: #ff6b6b; color: white; animation: shake 0.5s;">
+        &#9888; Sorry! That room type is fully booked for those dates. Please choose another.
+    </div>
+<% } %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -131,11 +136,11 @@
                         <%
                             RoomTypeDAO roomDao = new RoomTypeDAO();
                             List<RoomType> rooms = roomDao.getAllRoomTypes();
-                            
                             for(RoomType room : rooms) {
                         %>
                             <option value="<%= room.getTypeName() %>">
-                                <%= room.getTypeName() %> ($<%= room.getPrice() %>/night)
+                                <%= room.getTypeName() %> 
+                                (Capacity: <%= room.getQuantity() %>) - $<%= room.getPrice() %>/night
                             </option>
                         <% } %>
                     </select>

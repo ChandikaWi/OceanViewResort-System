@@ -13,10 +13,9 @@
         response.sendRedirect("login.jsp");
         return;
     }
-    
     String role = (String) session.getAttribute("role");
-    if (!"ADMIN".equals(role)) {
-        response.sendRedirect("dashboard.jsp?error=access_denied");
+    if (role == null || !"ADMIN".equals(role)) {
+        response.sendRedirect("dashboard.jsp");
         return;
     }
 %>
@@ -47,7 +46,7 @@
         <a href="reservations.jsp">
             <span class="icon">&#128196;</span> <span class="menu-text">Reservations</span>
         </a>
-        <a href="BillServlet?id=last" onclick="alert('Please go to Reservations page to print bill.')">
+        <a href="javascript:void(0)" onclick="openBillModal()">
             <span class="icon">&#128424;</span> <span class="menu-text">Print Bill</span>
         </a>
         
@@ -57,6 +56,19 @@
         <a href="manage_rooms.jsp" style="background-color: #34495e; border-left: 5px solid #1abc9c;">
             <span class="icon">&#128716;</span> <span class="menu-text">Manage Rooms</span>
         </a>
+        
+        <% 
+            String roleForStats = (String) session.getAttribute("role");
+            if ("ADMIN".equals(roleForStats)) { 
+        %>
+            <a href="statistics_admin.jsp">
+                <span class="icon">&#128200;</span> <span class="menu-text">Statistics</span>
+            </a>
+        <% } else { %>
+            <a href="statistics_staff.jsp">
+                <span class="icon">&#128202;</span> <span class="menu-text">Statistics</span>
+            </a>
+        <% } %>
 
         <a href="logout.jsp" style="margin-top: 50px; color: #ff6b6b;">
             <span class="icon">&#128682;</span> <span class="menu-text">Logout</span>
@@ -89,6 +101,11 @@
                     <label>Price per Night (USD)</label>
                     <input type="number" step="0.01" name="price" required>
                 </div>
+
+                <div class="form-group">
+                    <label>Total Rooms (Quantity)</label>
+                    <input type="number" name="quantity" placeholder="e.g., 5" required>
+                </div>
                 <div class="form-group">
                     <label>Image URL (e.g., https://site.com/img.jpg)</label>
                     <input type="text" name="imageUrl" placeholder="Paste image link here" required>
@@ -109,6 +126,7 @@
                         <th>Image</th>
                         <th>Name</th>
                         <th>Price</th>
+                        <th>Quantity</th> 
                         <th>Description</th>
                         <th>Actions</th>
                     </tr>
@@ -125,10 +143,11 @@
                         </td>
                         <td><%= r.getTypeName() %></td>
                         <td>$<%= r.getPrice() %></td>
+                        <td style="font-weight: bold; color: #2c3e50; text-align: center;"><%= r.getQuantity() %></td> 
                         <td><%= r.getDescription() %></td>
                         <td>
                             <button type="button" 
-                                    onclick="openUpdateModal('<%= r.getId() %>', '<%= r.getTypeName() %>', '<%= r.getPrice() %>', '<%= r.getImageUrl() %>', '<%= r.getDescription() %>')"
+                                    onclick="openUpdateModal('<%= r.getId() %>', '<%= r.getTypeName() %>', '<%= r.getPrice() %>', '<%= r.getImageUrl() %>', '<%= r.getDescription() %>', '<%= r.getQuantity() %>')"
                                     style="background-color: #ffc107; color: black; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; margin-right: 5px;">
                                 Update
                             </button>
@@ -160,6 +179,9 @@
                 <label>Price</label>
                 <input type="number" step="0.01" id="upPrice" name="price" class="modal-input" required>
                 
+                <label>Quantity</label>
+                <input type="number" id="upQty" name="quantity" class="modal-input" required>
+
                 <label>Image URL</label>
                 <input type="text" id="upImg" name="imageUrl" class="modal-input" required>
                 
@@ -186,10 +208,11 @@
     </div>
 
     <script>
-        function openUpdateModal(id, name, price, img, desc) {
+        function openUpdateModal(id, name, price, img, desc, qty) {
             document.getElementById("upId").value = id;
             document.getElementById("upName").value = name;
             document.getElementById("upPrice").value = price;
+            document.getElementById("upQty").value = qty;
             document.getElementById("upImg").value = img;
             document.getElementById("upDesc").value = desc;
             document.getElementById("updateModal").style.display = "block";
@@ -205,7 +228,25 @@
         window.onclick = function(event) {
             if (event.target == document.getElementById("updateModal")) closeUpdateModal();
             if (event.target == document.getElementById("deleteModal")) closeDeleteModal();
+            if (event.target == document.getElementById("billModal")) closeBillModal();
         }
+    </script>
+    
+    <div id="billModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeBillModal()">&times;</span>
+            <div class="modal-header">Find Reservation for Billing</div>
+            <p>Enter Guest Name or Reservation ID:</p>
+            <form action="reservations.jsp" method="get">
+                <input type="text" name="q" class="modal-input" placeholder="e.g., John or 1001" required>
+                <br>
+                <button type="submit" class="modal-btn">Find & Print</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        function openBillModal() { document.getElementById("billModal").style.display = "block"; }
+        function closeBillModal() { document.getElementById("billModal").style.display = "none"; }
     </script>
 </body>
 </html>

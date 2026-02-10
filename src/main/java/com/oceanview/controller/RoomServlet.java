@@ -27,6 +27,8 @@ public class RoomServlet extends HttpServlet {
         
         String action = request.getParameter("action");
         RoomTypeDAO dao = new RoomTypeDAO();
+        
+        String redirectURL = "manage_rooms.jsp";
 
         try {
             if ("add".equals(action)) {
@@ -34,10 +36,15 @@ public class RoomServlet extends HttpServlet {
                 BigDecimal price = new BigDecimal(request.getParameter("price"));
                 String desc = request.getParameter("description");
                 String img = request.getParameter("imageUrl");
+                int qty = Integer.parseInt(request.getParameter("quantity"));
                 
-                RoomType room = new RoomType(0, name, price, desc, img);
-                dao.addRoomType(room);
-                response.sendRedirect("manage_rooms.jsp?success=added");
+                RoomType room = new RoomType(0, name, price, desc, img, qty);
+                
+                if(dao.addRoomType(room)) {
+                    redirectURL += "?success=added";
+                } else {
+                    redirectURL += "?error=fail";
+                }
             } 
             else if ("update".equals(action)) {
                 int id = Integer.parseInt(request.getParameter("id"));
@@ -45,19 +52,30 @@ public class RoomServlet extends HttpServlet {
                 BigDecimal price = new BigDecimal(request.getParameter("price"));
                 String desc = request.getParameter("description");
                 String img = request.getParameter("imageUrl");
+                int qty = Integer.parseInt(request.getParameter("quantity"));
 
-                RoomType room = new RoomType(id, name, price, desc, img);
-                dao.updateRoomType(room);
-                response.sendRedirect("manage_rooms.jsp?success=updated");
+                RoomType room = new RoomType(id, name, price, desc, img, qty);
+                
+                if(dao.updateRoomType(room)) {
+                    redirectURL += "?success=updated";
+                } else {
+                    redirectURL += "?error=fail";
+                }
             } 
             else if ("delete".equals(action)) {
                 int id = Integer.parseInt(request.getParameter("id"));
-                dao.deleteRoomType(id);
-                response.sendRedirect("manage_rooms.jsp?success=deleted");
+                if(dao.deleteRoomType(id)) {
+                    redirectURL += "?success=deleted";
+                } else {
+                    redirectURL += "?error=fail";
+                }
             }
+            
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("manage_rooms.jsp?error=fail");
+            redirectURL = "manage_rooms.jsp?error=invalid_input";
         }
+        
+        response.sendRedirect(redirectURL);
     }
 }

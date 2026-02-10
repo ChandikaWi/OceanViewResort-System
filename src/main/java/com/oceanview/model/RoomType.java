@@ -17,15 +17,17 @@ public class RoomType {
     private BigDecimal price;
     private String description;
     private String imageUrl;
+    private int quantity;
 
     public RoomType() {}
 
-    public RoomType(int id, String typeName, BigDecimal price, String description, String imageUrl) {
+    public RoomType(int id, String typeName, BigDecimal price, String description, String imageUrl, int quantity) {
         this.id = id;
         this.typeName = typeName;
         this.price = price;
         this.description = description;
         this.imageUrl = imageUrl;
+        this.quantity = quantity; 
     }
 
     public int getId() { return id; }
@@ -38,4 +40,6 @@ public class RoomType {
     public void setDescription(String description) { this.description = description; }
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    public int getQuantity() { return quantity; }
+    public void setQuantity(int quantity) { this.quantity = quantity; }
 }
