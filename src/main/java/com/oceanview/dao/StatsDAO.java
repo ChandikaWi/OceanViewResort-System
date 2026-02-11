@@ -72,6 +72,10 @@ public class StatsDAO {
         return getCount("SELECT COUNT(*) FROM reservations WHERE check_out >= CURRENT_DATE()");
     }
 
+    public int getTotalBookings() {
+        return getCount("SELECT COUNT(*) FROM reservations");
+    }
+
     private int getCount(String sql) {
         try (Connection conn = DBConnection.getConnection();
              Statement stmt = conn.createStatement();
