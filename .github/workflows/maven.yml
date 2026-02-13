@@ -20,3 +20,4 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build with Maven (Skip DB Tests)
+      run: mvn -B package --file pom.xml -Dtest=!IntegrationTests,!AvailabilityTest
