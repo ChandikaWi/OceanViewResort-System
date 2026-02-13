@@ -17,7 +17,7 @@ import java.util.List;
 public class ReservationDAO {
 
     public boolean addReservation(Reservation res) {
-        String sql = "INSERT INTO reservations (res_id, guest_name, address, contact_number, email, room_type, check_in, check_out, total_cost) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO reservations (res_id, guest_name, address, contact_number, email, room_type, check_in, check_out, total_cost) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
@@ -25,24 +25,12 @@ public class ReservationDAO {
             stmt.setString(2, res.getGuestName());
             stmt.setString(3, res.getAddress());
             stmt.setString(4, res.getContactNumber());
-            stmt.setString(5, res.getEmail());
+            stmt.setString(5, res.getEmail()); 
             stmt.setString(6, res.getRoomType());
             stmt.setDate(7, res.getCheckIn());
             stmt.setDate(8, res.getCheckOut());
             stmt.setBigDecimal(9, res.getTotalCost());
             
-            return stmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-    
-    public boolean deleteReservation(int id) {
-        String sql = "DELETE FROM reservations WHERE res_id = ?";
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -74,7 +62,19 @@ public class ReservationDAO {
         }
         return list;
     }
-
+    
+    public boolean deleteReservation(int id) {
+        String sql = "DELETE FROM reservations WHERE res_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
     public List<Reservation> searchReservations(String query) {
         List<Reservation> list = new ArrayList<>();
         String sql = "SELECT * FROM reservations WHERE guest_name LIKE ? OR CAST(res_id AS CHAR) LIKE ?";

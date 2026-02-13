@@ -15,6 +15,7 @@ import java.util.Map;
 
 public class StatsDAO {
 
+    // Get Total Revenue 
     public double getTotalRevenue() {
         String sql = "SELECT SUM(GREATEST(DATEDIFF(r.check_out, r.check_in), 1) * rt.price) " +
                      "FROM reservations r " +
@@ -28,6 +29,7 @@ public class StatsDAO {
         return 0.0;
     }
 
+    // Get Count of Each Room Type
     public Map<String, Integer> getRoomTypeDistribution() {
         Map<String, Integer> data = new HashMap<>();
         String sql = "SELECT room_type, COUNT(*) FROM reservations GROUP BY room_type";
@@ -41,6 +43,7 @@ public class StatsDAO {
         return data;
     }
 
+    // Get Revenue by Month
     public Map<String, Double> getMonthlyRevenue() {
         Map<String, Double> data = new HashMap<>();
         String sql = "SELECT MONTHNAME(r.check_in), " +
@@ -60,6 +63,7 @@ public class StatsDAO {
         return data;
     }
 
+    // Operational Counts
     public int getTodaysCheckIns() {
         return getCount("SELECT COUNT(*) FROM reservations WHERE check_in = CURRENT_DATE()");
     }
@@ -72,10 +76,12 @@ public class StatsDAO {
         return getCount("SELECT COUNT(*) FROM reservations WHERE check_out >= CURRENT_DATE()");
     }
 
+
     public int getTotalBookings() {
         return getCount("SELECT COUNT(*) FROM reservations");
     }
 
+    // Helper method
     private int getCount(String sql) {
         try (Connection conn = DBConnection.getConnection();
              Statement stmt = conn.createStatement();
@@ -85,3 +91,4 @@ public class StatsDAO {
         return 0;
     }
 }
+

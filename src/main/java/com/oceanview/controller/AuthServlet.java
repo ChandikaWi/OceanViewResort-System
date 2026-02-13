@@ -30,33 +30,44 @@ public class AuthServlet extends HttpServlet {
         
         String u = request.getParameter("username");
         String p = request.getParameter("password");
-
+        
+        // Validate User
         String role = validateAndGetRole(u, p); 
         
         if (role != null) {
-
+            // SUCCESSFUL LOGIN
+            
+            // Session Management
             HttpSession session = request.getSession();
-            session.setAttribute("user", u);        
-            session.setAttribute("username", u);    
-            session.setAttribute("role", role);     
+            session.setAttribute("user", u);        // Keeps user logged in
+            session.setAttribute("username", u);    // Used for displaying name in Sidebar
+            session.setAttribute("role", role);     // Used for Security/Access Control
 
-            String remember = request.getParameter("remember");
+            // Cookie Management ("Remember Me")
+            String remember = request.getParameter("remember"); 
             Cookie cookie = new Cookie("remember_user", u);     
             
             if (remember != null) {
+                // Checkbox is checked: Save for 7 days
                 cookie.setMaxAge(60 * 60 * 24 * 7); 
             } else {
+                // Checkbox NOT checked: Delete cookie immediately
                 cookie.setMaxAge(0); 
             }
+            
+            // Add the cookie to the response so the browser saves it
             response.addCookie(cookie);
 
+            // Redirect to Dashboard
             response.sendRedirect("dashboard.jsp");
             
         } else {
+            // FAILED LOGIN 
             response.sendRedirect("login.jsp?error=invalid");
         }
     }
 
+    // Helper method to check credentials and get Role
     private String validateAndGetRole(String username, String password) {
         String role = null;
         try (Connection conn = DBConnection.getConnection();
@@ -67,7 +78,7 @@ public class AuthServlet extends HttpServlet {
             
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    role = rs.getString("role");
+                    role = rs.getString("role"); 
                 }
             }
         } catch (Exception e) {

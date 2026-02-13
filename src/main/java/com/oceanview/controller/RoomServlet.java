@@ -28,6 +28,7 @@ public class RoomServlet extends HttpServlet {
         String action = request.getParameter("action");
         RoomTypeDAO dao = new RoomTypeDAO();
         
+        // Default destination (Safeguard: Always go back to this page)
         String redirectURL = "manage_rooms.jsp";
 
         try {
@@ -70,12 +71,15 @@ public class RoomServlet extends HttpServlet {
                     redirectURL += "?error=fail";
                 }
             }
+            // If action is null or unknown, it stays "manage_rooms.jsp"
             
         } catch (Exception e) {
             e.printStackTrace();
+            // If the user entered bad data (like text in a number field), catch it here
             redirectURL = "manage_rooms.jsp?error=invalid_input";
         }
         
+        // FORCE REDIRECT 
         response.sendRedirect(redirectURL);
     }
 }

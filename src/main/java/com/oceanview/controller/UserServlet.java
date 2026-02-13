@@ -21,8 +21,8 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/UserServlet")
 public class UserServlet extends HttpServlet {
     
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
-            throws ServletException, IOException {
+        protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+        throws ServletException, IOException {
         
         String action = request.getParameter("action");
         UserDAO dao = new UserDAO();

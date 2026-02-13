@@ -33,6 +33,7 @@ public class StatsWebService extends HttpServlet {
             double revenue = statsDao.getTotalRevenue();
             int bookings = statsDao.getTotalBookings();
             
+            // Return JSON object
             String json = String.format(
                 "{\"revenue\": %.2f, \"total_bookings\": %d, \"company\": \"Ocean View Resort\"}", 
                 revenue, bookings

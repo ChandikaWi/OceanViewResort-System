@@ -22,8 +22,10 @@ public class ModelTest {
     public void testRoomTypeCreation() {
         System.out.println("TEST: RoomType Object Creation");
         
+        // Arrange
         RoomType room = new RoomType(1, "Deluxe", new BigDecimal("150.00"), "Desc", "img.jpg", 10);
         
+        // Act & Assert
         assertEquals("Deluxe", room.getTypeName());
         assertEquals(new BigDecimal("150.00"), room.getPrice());
         assertEquals(10, room.getQuantity());
@@ -33,11 +35,14 @@ public class ModelTest {
     public void testReservationTotalCostLogic() {
         System.out.println("TEST: Reservation Cost Logic");
         
+        // Arrange
         BigDecimal pricePerNight = new BigDecimal("100.00");
         int nights = 5;
         
+        // Act 
         BigDecimal total = pricePerNight.multiply(new BigDecimal(nights));
         
+        // Assert
         assertEquals(new BigDecimal("500.00"), total, "Total cost should be 500.00");
     }
 }

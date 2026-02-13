@@ -67,6 +67,7 @@
             <a href="manage_staff.jsp">
                 <span class="icon">&#128100;</span> <span class="menu-text">Manage Staff</span>
             </a>
+            
             <a href="manage_rooms.jsp">
                 <span class="icon">&#128716;</span> <span class="menu-text">Manage Rooms</span>
             </a>
@@ -77,7 +78,7 @@
             if ("ADMIN".equals(roleForStats)) { 
         %>
             <a href="statistics_admin.jsp">
-                <span class="icon">&#128200;</span> <span class="menu-text">Statistics</span>
+                <span class="icon">&#128202;</span> <span class="menu-text">Statistics</span>
             </a>
         <% } else { %>
             <a href="statistics_staff.jsp">
@@ -127,7 +128,7 @@
                 </div>
                 <div class="form-group">
                     <label>Email Address</label>
-                    <input type="email" name="email" placeholder="guest@example.com" required>
+                    <input type="email" name="email" placeholder="guest@gmail.com" required>
                 </div>
                 <div class="form-group">
                     <label>Room Type</label>
@@ -166,28 +167,32 @@
         <p>Enter Guest Name or Reservation ID:</p>
         
         <form action="reservations.jsp" method="get">
-            <input type="text" name="q" class="modal-input" placeholder="e.g., John or 1001" required>
+            <input type="text" name="q" class="modal-input" placeholder="e.g., Guest or 1001" required>
             <br>
             <button type="submit" class="modal-btn">Find & Print</button>
         </form>
     </div>
-</div>
+    </div>
 
-<script>
-    function openBillModal() {
-        document.getElementById("billModal").style.display = "block";
-    }
-
-    function closeBillModal() {
-        document.getElementById("billModal").style.display = "none";
-    }
-
-    window.onclick = function(event) {
-        var modal = document.getElementById("billModal");
-        if (event.target == modal) {
-            modal.style.display = "none";
+    <script>
+        // Open the Modal
+        function openBillModal() {
+            document.getElementById("billModal").style.display = "block";
         }
-    }
-</script>
+
+        // Close the Modal
+        function closeBillModal() {
+            document.getElementById("billModal").style.display = "none";
+        }
+
+        // Close modal if user clicks outside the box
+        window.onclick = function(event) {
+            var modal = document.getElementById("billModal");
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+    
 </body>
 </html>

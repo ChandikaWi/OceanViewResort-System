@@ -34,6 +34,7 @@ public class RoomWebService extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             List<RoomType> rooms = roomDao.getAllRoomTypes();
             
+            // Build JSON manually
             StringBuilder json = new StringBuilder("[");
             for (int i = 0; i < rooms.size(); i++) {
                 RoomType r = rooms.get(i);

@@ -13,6 +13,7 @@
         response.sendRedirect("login.jsp");
         return;
     }
+    // Security- Only Admin
     String role = (String) session.getAttribute("role");
     if (role == null || !"ADMIN".equals(role)) {
         response.sendRedirect("dashboard.jsp");
@@ -62,7 +63,7 @@
             if ("ADMIN".equals(roleForStats)) { 
         %>
             <a href="statistics_admin.jsp">
-                <span class="icon">&#128200;</span> <span class="menu-text">Statistics</span>
+                <span class="icon">&#128202;</span> <span class="menu-text">Statistics</span>
             </a>
         <% } else { %>
             <a href="statistics_staff.jsp">
@@ -94,7 +95,7 @@
                 <input type="hidden" name="action" value="add">
                 
                 <div class="form-group">
-                    <label>Room Name (e.g., Deluxe Suite)</label>
+                    <label>Room Name (e.g., Deluxe,Luxury)</label>
                     <input type="text" name="typeName" required>
                 </div>
                 <div class="form-group">
@@ -208,6 +209,7 @@
     </div>
 
     <script>
+        // Update Modal Logic
         function openUpdateModal(id, name, price, img, desc, qty) {
             document.getElementById("upId").value = id;
             document.getElementById("upName").value = name;
@@ -219,6 +221,7 @@
         }
         function closeUpdateModal() { document.getElementById("updateModal").style.display = "none"; }
 
+        // Delete Modal Logic
         function openDeleteModal(id) {
             document.getElementById("delId").value = id;
             document.getElementById("deleteModal").style.display = "block";
@@ -238,7 +241,7 @@
             <div class="modal-header">Find Reservation for Billing</div>
             <p>Enter Guest Name or Reservation ID:</p>
             <form action="reservations.jsp" method="get">
-                <input type="text" name="q" class="modal-input" placeholder="e.g., John or 1001" required>
+                <input type="text" name="q" class="modal-input" placeholder="e.g., Guest or 1001" required>
                 <br>
                 <button type="submit" class="modal-btn">Find & Print</button>
             </form>
@@ -248,5 +251,6 @@
         function openBillModal() { document.getElementById("billModal").style.display = "block"; }
         function closeBillModal() { document.getElementById("billModal").style.display = "none"; }
     </script>
+    
 </body>
 </html>

@@ -12,6 +12,7 @@
 <%@page import="com.oceanview.model.Reservation"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
+    // Security Check
     if (session.getAttribute("user") == null) {
         response.sendRedirect("login.jsp");
         return;
@@ -66,7 +67,7 @@
             if ("ADMIN".equals(roleForStats)) { 
         %>
             <a href="statistics_admin.jsp">
-                <span class="icon">&#128200;</span> <span class="menu-text">Statistics</span>
+                <span class="icon">&#128202;</span> <span class="menu-text">Statistics</span>
             </a>
         <% } else { %>
             <a href="statistics_staff.jsp">
@@ -178,13 +179,28 @@
             <p>Enter Guest Name or Reservation ID:</p>
             
             <form action="reservations.jsp" method="get">
-                <input type="text" name="q" class="modal-input" placeholder="e.g., John or 1001" required>
+                <input type="text" name="q" class="modal-input" placeholder="e.g., Guest or 1001" required>
                 <br>
                 <button type="submit" class="modal-btn">Find & Print</button>
             </form>
         </div>
     </div>
-                
+
+    <script>
+        function openBillModal() {
+            document.getElementById("billModal").style.display = "block";
+        }
+        function closeBillModal() {
+            document.getElementById("billModal").style.display = "none";
+        }
+        window.onclick = function(event) {
+            var modal = document.getElementById("billModal");
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+    
     <div id="deleteModal" class="modal">
         <div class="modal-content" style="width: 400px; text-align: center; border-top: 5px solid #dc3545;">
             <span class="close-modal" onclick="closeDeleteModal()">&times;</span>
@@ -212,12 +228,9 @@
     </div>
 
     <script>
-        function openBillModal() {
-            document.getElementById("billModal").style.display = "block";
-        }
-        function closeBillModal() {
-            document.getElementById("billModal").style.display = "none";
-        }
+        function openBillModal() { document.getElementById("billModal").style.display = "block"; }
+        function closeBillModal() { document.getElementById("billModal").style.display = "none"; }
+
         function openDeleteModal(id) {
             document.getElementById("deleteId").value = id;
             document.getElementById("deleteModal").style.display = "block";
@@ -230,6 +243,7 @@
             if (event.target == document.getElementById("billModal")) closeBillModal();
             if (event.target == document.getElementById("deleteModal")) closeDeleteModal();
         }
-    </script>  
+    </script>
+    
 </body>
 </html>

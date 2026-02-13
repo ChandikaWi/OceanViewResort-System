@@ -23,12 +23,16 @@ public class AvailabilityTest {
         
         RoomTypeDAO dao = new RoomTypeDAO();
         
+        // Test Data: Future dates that are empty
         String type = "Luxury Suite";
         Date checkIn = Date.valueOf("2028-01-01");
         Date checkOut = Date.valueOf("2028-01-05");
         
+        // Act
         boolean isAvailable = dao.isRoomAvailable(type, checkIn, checkOut);
         
+        // Expect TRUE because 2028 is empty. 
+        // If this fails, it means DB connection is wrong or room doesn't exist.
         assertTrue(isAvailable, "Luxury Suite should be available in 2028");
     }
     
@@ -39,6 +43,7 @@ public class AvailabilityTest {
         RoomTypeDAO dao = new RoomTypeDAO();
         boolean result = dao.isRoomAvailable("NonExistentRoom", Date.valueOf("2026-01-01"), Date.valueOf("2026-01-05"));
         
+        // Should be false because room quantity is 0 
         assertFalse(result, "Non-existent room should not be available");
     }
 }

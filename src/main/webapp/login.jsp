@@ -17,7 +17,7 @@
     <div class="login-card">
         <div style="margin-bottom: 20px;">
             <span style="font-size: 50px; color: #1abc9c;">&#127968;</span>
-            <h2 style="color: #2c3e50; margin: 10px 0;">Staff Portal</h2>
+            <h2 style="color: #2c3e50; margin: 10px 0;">Login Portal</h2>
             <p style="color: #7f8c8d; font-size: 14px;">Please sign in to continue</p>
         </div>
 
@@ -39,6 +39,7 @@
         <form action="AuthServlet" method="post">
             
             <%
+                // Check for "remember_user" cookie
                 String savedUser = "";
                 Cookie[] cookies = request.getCookies();
                 if (cookies != null) {

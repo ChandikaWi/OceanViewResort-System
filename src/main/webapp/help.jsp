@@ -13,13 +13,16 @@
     <style>
         body { background-color: #f4f4f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         
+        /* Navigation Bar */
         .navbar { background-color: #2c3e50; padding: 15px 30px; color: white; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         .nav-brand { font-size: 20px; font-weight: bold; letter-spacing: 1px; }
         .back-link { color: #1abc9c; text-decoration: none; font-size: 14px; border: 1px solid #1abc9c; padding: 5px 15px; border-radius: 4px; transition: 0.3s; }
         .back-link:hover { background-color: #1abc9c; color: white; }
 
+        /* Main Container */
         .help-container { max-width: 900px; margin: 40px auto; background: white; padding: 50px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         
+        /* Section Headers */
         h1 { border-bottom: 2px solid #eee; padding-bottom: 15px; color: #2c3e50; margin-top: 0; }
         h2.role-title { 
             background-color: #2c3e50; 
@@ -31,12 +34,15 @@
             display: inline-block;
         }
 
+        /* Step Styles */
         .step { margin-bottom: 30px; border-left: 5px solid #1abc9c; padding-left: 20px; margin-top: 25px; }
         .step h3 { color: #2c3e50; margin-top: 0; display: flex; align-items: center; font-size: 18px; }
         .step-icon { background-color: #2c3e50; color: white; width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 14px; font-weight: bold; }
         
+        /* Code/Data highlighting */
         code { background-color: #f1f2f6; padding: 2px 6px; border-radius: 3px; font-family: monospace; color: #e74c3c; border: 1px solid #ddd; }
         
+        /* Lists */
         ul, ol { line-height: 1.6; color: #555; }
         li { margin-bottom: 8px; }
     </style>
@@ -141,5 +147,6 @@
             <a href="login.jsp" class="back-link" style="padding: 12px 30px; font-size: 16px;">Return to System Login</a>
         </div>
     </div>
+    
 </body>
 </html>

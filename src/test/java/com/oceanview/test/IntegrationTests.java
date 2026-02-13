@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class IntegrationTests {
 
+    // TEST 4: Verify Database Connectivity
     @Test
     public void testDBConnection() throws SQLException {
         System.out.println("Running TC_04: DB Connection...");
@@ -28,11 +29,13 @@ public class IntegrationTests {
         assertNotNull(conn, "Database connection failed! Is MySQL running?");
     }
 
+    // TEST 5: Verify Availability Logic (Live DB)
     @Test
     public void testRoomAvailability() {
         System.out.println("Running TC_05: Availability Check...");
         RoomTypeDAO dao = new RoomTypeDAO();
         
+        // Check a date far in the future 
         Date checkIn = Date.valueOf("2099-01-01");
         Date checkOut = Date.valueOf("2099-01-05");
         
@@ -41,6 +44,7 @@ public class IntegrationTests {
         assertTrue(result, "Luxury Suite should be available in 2099");
     }
 
+    // TEST 6: Verify Price Fetching
     @Test
     public void testGetRoomPrice() {
         System.out.println("Running TC_06: Price Lookup...");
@@ -48,10 +52,12 @@ public class IntegrationTests {
         
         BigDecimal price = dao.getRoomPrice("Luxury Suite");
         
+        // valid price 
         assertNotNull(price);
         assertTrue(price.doubleValue() > 0, "Price should be greater than 0");
     }
 
+    // TEST 7: Verify Statistics Generation
     @Test
     public void testStatsRevenue() {
         System.out.println("Running TC_07: Stats Revenue...");
@@ -59,6 +65,7 @@ public class IntegrationTests {
         
         double revenue = stats.getTotalRevenue();
         
+        // Revenue could be 0.0 if empty, or higher.
         assertTrue(revenue >= 0.0, "Revenue calculation crashed or returned negative");
     }
 }

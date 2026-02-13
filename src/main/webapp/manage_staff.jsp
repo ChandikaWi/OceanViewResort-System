@@ -15,8 +15,9 @@
     }
     
     String role = (String) session.getAttribute("role");
-    if (!"ADMIN".equals(role)) {
-        response.sendRedirect("dashboard.jsp?error=access_denied");
+    if (role == null || !"ADMIN".equals(role)) {
+        // If not admin, kick them back to dashboard
+        response.sendRedirect("dashboard.jsp");
         return;
     }
 %>
@@ -30,6 +31,11 @@
             document.getElementById("mySidebar").classList.toggle("collapsed");
             document.getElementById("main").classList.toggle("expanded");
         }
+        
+        function confirmDelete() {
+            return confirm("Are you sure you want to delete this staff account?");
+        }
+        
     </script>
 </head>
 <body>
@@ -40,15 +46,44 @@
         <div style="text-align: center; color: white; margin-bottom: 30px; white-space: nowrap;">
             <span class="menu-text" style="font-weight: bold; font-size: 18px;">Ocean View<br>Resort</span>
         </div>
+        
         <a href="dashboard.jsp">
-            <span class="icon">&#127968;</span> <span class="menu-text">Dashboard</span>
+            <span class="icon">&#10133;</span> <span class="menu-text">New Booking</span>
         </a>
-        <a href="manage_staff.jsp" style="background-color: #34495e; border-left: 5px solid #1abc9c;">
-            <span class="icon">&#128100;</span> <span class="menu-text">Manage Staff</span>
+        <a href="reservations.jsp">
+            <span class="icon">&#128196;</span> <span class="menu-text">Reservations</span>
         </a>
-        <a href="manage_rooms.jsp">
-            <span class="icon">&#128716;</span> <span class="menu-text">Manage Rooms</span>
+        <a href="javascript:void(0)" onclick="openBillModal()">
+            <span class="icon">&#128424;</span> <span class="menu-text">Print Bill</span>
         </a>
+        
+        <% 
+            String userRole = (String) session.getAttribute("role");
+            if ("ADMIN".equals(userRole)) { 
+        %>
+            <a href="manage_staff.jsp" style="background-color: #34495e; border-left: 5px solid #1abc9c;">
+                <span class="icon">&#128100;</span> <span class="menu-text">Manage Staff</span>
+            </a>
+            
+            <a href="manage_rooms.jsp">
+                <span class="icon">&#128716;</span> <span class="menu-text">Manage Rooms</span>
+            </a>
+        <% } %>
+        
+        <% 
+            String roleForStats = (String) session.getAttribute("role");
+            if ("ADMIN".equals(roleForStats)) { 
+        %>
+            <a href="statistics_admin.jsp">
+                <span class="icon">&#128202;</span> <span class="menu-text">Statistics</span>
+            </a>
+        <% } else { %>
+            <a href="statistics_staff.jsp">
+                <span class="icon">&#128202;</span> <span class="menu-text">Statistics</span>
+            </a>
+        <% } %>
+        
+        
         <a href="logout.jsp" style="margin-top: 50px; color: #ff6b6b;">
             <span class="icon">&#128682;</span> <span class="menu-text">Logout</span>
         </a>
@@ -62,7 +97,11 @@
             <% if ("added".equals(request.getParameter("success"))) { %>
                 <div class="alert">Staff account created successfully!</div>
             <% } %>
-            
+            <% if ("updated".equals(request.getParameter("success"))) { %>
+                <div class="alert" style="background-color: #d4edda; color: #155724; border-color: #c3e6cb;">
+                    Staff details updated successfully!
+                </div>
+            <% } %>
             <form action="UserServlet" method="post">
                 <input type="hidden" name="action" value="add">
                 <div class="form-group">
@@ -86,12 +125,6 @@
 
         <div class="container">
             <h3>Existing Staff Accounts</h3>
-            <% if ("updated".equals(request.getParameter("success"))) { %>
-                <div class="alert" style="background-color: #d4edda; color: #155724; border-color: #c3e6cb;">
-                    Staff details updated successfully!
-                </div>
-            <% } %>
-            
             <% if ("deleted".equals(request.getParameter("success"))) { %>
                 <div class="alert" style="background-color: #f8d7da; color: #721c24;">Account deleted successfully.</div>
             <% } %>
@@ -134,7 +167,7 @@
             </table>
         </div>
     </div>
-                
+    
     <div id="updateModal" class="modal">
         <div class="modal-content" style="width: 350px;">
             <span class="close-modal" onclick="closeUpdateModal()">&times;</span>
@@ -164,7 +197,32 @@
             </form>
         </div>
     </div>
-                
+
+    <script>
+        // Open Modal and Fill Data
+        function openUpdateModal(id, username, password, role) {
+            document.getElementById("updateId").value = id;
+            document.getElementById("updateUsername").value = username;
+            document.getElementById("updatePassword").value = password;
+            document.getElementById("updateRole").value = role;
+            
+            document.getElementById("updateModal").style.display = "block";
+        }
+
+        // Close Modal
+        function closeUpdateModal() {
+            document.getElementById("updateModal").style.display = "none";
+        }
+
+        // Close if clicking outside
+        window.onclick = function(event) {
+            var modal = document.getElementById("updateModal");
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+    
     <div id="deleteModal" class="modal">
         <div class="modal-content" style="width: 400px; text-align: center; border-top: 5px solid #dc3545;">
             <span class="close-modal" onclick="closeDeleteModal()">&times;</span>
@@ -192,15 +250,18 @@
     </div>
 
     <script>
+        // Open Modal and set the User ID
         function openDeleteModal(id) {
-            document.getElementById("deleteId").value = id; 
+            document.getElementById("deleteId").value = id; // Pass ID to hidden input
             document.getElementById("deleteModal").style.display = "block";
         }
 
+        // Close Modal
         function closeDeleteModal() {
             document.getElementById("deleteModal").style.display = "none";
         }
 
+        // Close if user clicks outside the box
         window.onclick = function(event) {
             var updateModal = document.getElementById("updateModal");
             var deleteModal = document.getElementById("deleteModal");
@@ -212,27 +273,41 @@
             }
         }
     </script>
+    
+    <div id="billModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeBillModal()">&times;</span>
+        <div class="modal-header">Find Reservation for Billing</div>
+        
+        <p>Enter Guest Name or Reservation ID:</p>
+        
+        <form action="reservations.jsp" method="get">
+            <input type="text" name="q" class="modal-input" placeholder="e.g., Guest or 1001" required>
+            <br>
+            <button type="submit" class="modal-btn">Find & Print</button>
+        </form>
+    </div>
+    </div>
 
     <script>
-        function openUpdateModal(id, username, password, role) {
-            document.getElementById("updateId").value = id;
-            document.getElementById("updateUsername").value = username;
-            document.getElementById("updatePassword").value = password;
-            document.getElementById("updateRole").value = role;
-            
-            document.getElementById("updateModal").style.display = "block";
+        // Open the Modal
+        function openBillModal() {
+            document.getElementById("billModal").style.display = "block";
         }
 
-        function closeUpdateModal() {
-            document.getElementById("updateModal").style.display = "none";
+        // Close the Modal
+        function closeBillModal() {
+            document.getElementById("billModal").style.display = "none";
         }
 
+        // Close modal if user clicks outside the box
         window.onclick = function(event) {
-            var modal = document.getElementById("updateModal");
+            var modal = document.getElementById("billModal");
             if (event.target == modal) {
                 modal.style.display = "none";
             }
         }
-    </script>    
+    </script>
+    
 </body>
 </html>

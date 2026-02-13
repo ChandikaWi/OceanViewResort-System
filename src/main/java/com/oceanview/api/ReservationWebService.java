@@ -30,6 +30,7 @@ public class ReservationWebService extends HttpServlet {
     private ReservationDAO resDao = new ReservationDAO();
     private RoomTypeDAO roomDao = new RoomTypeDAO();
 
+    // GET: List all reservations
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
@@ -56,6 +57,7 @@ public class ReservationWebService extends HttpServlet {
         }
     }
 
+    // POST: Create a new reservation 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
@@ -64,6 +66,7 @@ public class ReservationWebService extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         try {
+            // Read parameters
             int resId = Integer.parseInt(request.getParameter("resId"));
             String name = request.getParameter("guestName");
             String email = request.getParameter("email");
@@ -71,23 +74,35 @@ public class ReservationWebService extends HttpServlet {
             Date checkIn = Date.valueOf(request.getParameter("checkIn"));
             Date checkOut = Date.valueOf(request.getParameter("checkOut"));
 
+            // Validate Availability
             if (!roomDao.isRoomAvailable(roomType, checkIn, checkOut)) {
                 response.setStatus(HttpServletResponse.SC_CONFLICT); 
                 out.print("{\"status\":\"error\", \"message\":\"Room not available\"}");
                 return;
             }
 
+            // Calculate Cost
             BigDecimal rate = roomDao.getRoomPrice(roomType);
             long days = ChronoUnit.DAYS.between(checkIn.toLocalDate(), checkOut.toLocalDate());
             if(days == 0) days = 1;
             BigDecimal total = rate.multiply(new BigDecimal(days));
 
+            // Save
             Reservation res = new Reservation(name, "N/A", "N/A", email, roomType, checkIn, checkOut, total);
             res.setId(resId);
             
             if (resDao.addReservation(res)) {
+                
+                String totalBillStr = "$ " + total.toString(); 
+                
                 new Thread(() -> com.oceanview.util.EmailService.sendBookingConfirmation(
-                        email, name, resId, checkIn.toString(), checkOut.toString()
+                        email, 
+                        name, 
+                        resId, 
+                        roomType,          
+                        checkIn.toString(), 
+                        checkOut.toString(), 
+                        totalBillStr        
                 )).start();
                 
                 out.print("{\"status\":\"success\", \"message\":\"Reservation Created\"}");
@@ -97,7 +112,7 @@ public class ReservationWebService extends HttpServlet {
             }
 
         } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST); 
             out.print("{\"status\":\"error\", \"message\":\"Invalid Data Format\"}");
         }
     }

@@ -75,6 +75,7 @@ public class RoomTypeDAO {
         return list;
     }
     
+    // Get Price for a specific room type
     public java.math.BigDecimal getRoomPrice(String typeName) {
         String sql = "SELECT price FROM room_types WHERE type_name = ?";
         try (Connection conn = DBConnection.getConnection();
@@ -92,11 +93,14 @@ public class RoomTypeDAO {
         return java.math.BigDecimal.ZERO; 
     }
     
+    
+    
     public boolean isRoomAvailable(String roomType, Date checkIn, Date checkOut) {
         int totalRooms = 0;
         int bookedRooms = 0;
 
         try (Connection conn = DBConnection.getConnection()) {
+            // Get Total Capacity
             String sqlTotal = "SELECT quantity FROM room_types WHERE type_name = ?";
             try (PreparedStatement stmt = conn.prepareStatement(sqlTotal)) {
                 stmt.setString(1, roomType);
@@ -104,17 +108,21 @@ public class RoomTypeDAO {
                 if (rs.next()) totalRooms = rs.getInt("quantity");
             }
 
+            // Count Overlapping Reservations
+            // Logic: A room is booked if the new check-in is before an existing check-out 
+            // AND the new check-out is after an existing check-in.
             String sqlCount = "SELECT COUNT(*) FROM reservations WHERE room_type = ? " +
                               "AND (check_in < ? AND check_out > ?)";
             
             try (PreparedStatement stmt = conn.prepareStatement(sqlCount)) {
                 stmt.setString(1, roomType);
-                stmt.setDate(2, checkOut); 
-                stmt.setDate(3, checkIn);  
+                stmt.setDate(2, checkOut); // Overlap Logic
+                stmt.setDate(3, checkIn);  // Overlap Logic
                 ResultSet rs = stmt.executeQuery();
                 if (rs.next()) bookedRooms = rs.getInt(1);
             }
             
+            // Compare
             return (totalRooms - bookedRooms) > 0;
 
         } catch (SQLException e) {

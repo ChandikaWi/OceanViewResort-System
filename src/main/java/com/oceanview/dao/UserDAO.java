@@ -29,18 +29,6 @@ public class UserDAO {
             return false;
         }
     }
-
-    public boolean deleteUser(int id) {
-        String sql = "DELETE FROM users WHERE id = ?";
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            return stmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
     
     public boolean updateUser(User user) {
         String sql = "UPDATE users SET username = ?, password = ?, role = ? WHERE id = ?";
@@ -52,6 +40,18 @@ public class UserDAO {
             stmt.setString(3, user.getRole());
             stmt.setInt(4, user.getId());
             
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean deleteUser(int id) {
+        String sql = "DELETE FROM users WHERE id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();

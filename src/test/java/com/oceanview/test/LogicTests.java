@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class LogicTests {
 
+    // TEST 1: Verify RoomType Model Encapsulation
     @Test
     public void testRoomTypeModel() {
         System.out.println("Running TC_01: RoomType Model...");
@@ -26,6 +27,7 @@ public class LogicTests {
         assertEquals(5, r.getQuantity());
     }
 
+    // TEST 2: Verify Cost Calculation Logic (Math check)
     @Test
     public void testCostCalculation() {
         System.out.println("Running TC_02: Cost Calculation...");
@@ -37,6 +39,7 @@ public class LogicTests {
         assertEquals(new BigDecimal("500.00"), total, "Math logic failed");
     }
 
+    // TEST 3: Verify User Role Logic
     @Test
     public void testUserModel() {
         System.out.println("Running TC_03: User Logic...");

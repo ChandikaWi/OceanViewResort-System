@@ -247,7 +247,6 @@ th {
 
 
 /* LOGIN PAGE */
-
 .login-body {
     background: linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%);
     height: 100vh;
@@ -353,7 +352,7 @@ th {
     100% { transform: translateX(0); }
 }
 
-/* Remember Me Checkbox Alignment */
+/* Remember Me Checkbox */
 .remember-box {
     display: flex;         
     align-items: center;     

@@ -60,25 +60,40 @@ public class ReservationServlet extends HttpServlet {
 
             RoomTypeDAO roomDao = new RoomTypeDAO();
 
+            // VALIDATION - CHECK AVAILABILITY BEFORE BOOKING
             if (!roomDao.isRoomAvailable(roomType, checkIn, checkOut)) {
+                // Room is full! Redirect with specific error
                 response.sendRedirect("dashboard.jsp?error=no_rooms");
-                return; 
+                return; // Stop execution immediately
             }
-            
+
+            // COST CALCULATION
             long days = ChronoUnit.DAYS.between(checkIn.toLocalDate(), checkOut.toLocalDate());
-            if (days == 0) days = 1; 
+            if (days == 0) days = 1; // Minimum 1 night
             
+            // Fetch the price from the database
             BigDecimal rate = roomDao.getRoomPrice(roomType);
             
+            // Calculate Total
             BigDecimal totalCost = rate.multiply(new BigDecimal(days));
 
+            // Create Object
             Reservation res = new Reservation(name, address, contact, email, roomType, checkIn, checkOut, totalCost);
             res.setId(resId);
             
+            // Save to DB
             if (reservationDAO.addReservation(res)) {
+                // SEND EMAIL IN BACKGROUND THREAD
                 new Thread(() -> {
+                    String totalBillStr = "$ " + totalCost.toString();
                     com.oceanview.util.EmailService.sendBookingConfirmation(
-                        email, name, resId, checkIn.toString(), checkOut.toString()
+                        email, 
+                        name, 
+                        resId, 
+                        roomType,      
+                        checkIn.toString(), 
+                        checkOut.toString(), 
+                        totalBillStr    
                     );
                 }).start();
 
