@@ -20,7 +20,7 @@ public class EmailService {
 
     // EMAIL CONFIGURATION
     private static final String SENDER_EMAIL = "chandikawi17@gmail.com"; 
-    private static final String SENDER_PASSWORD = "Password-is-hidden"; 
+    private static final String SENDER_PASSWORD = "hrmnzwkvnvrfazcn"; 
 
     private static Session getSession() {
         Properties props = new Properties();
